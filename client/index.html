@@ -1,14 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Chat Program</title>
-    <link rel="stylesheet" href="/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PVS Chat</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="/script.js"></script>
-</head>
-<body>
-    <h1>Hello World</h1>
-</body>
+  </head>
+  <body class="flex flex-col bg-slate-800 text-white h-screen w-screen gap-4">
+    <header class="flex justify-center items-center h-16">
+      <h1 class="font-bold text-2xl">PVS Chat</h1>
+    </header>
+    <main class="grow flex justify-center overflow-y-auto">
+      <div class="flex max-w-xl md:max-w-3xl flex-col grow relative px-4">
+        <div
+          class="flex flex-col absolute -left-80 bg-slate-500 w-80 rounded-lg p-4 gap-4 top-0"
+        >
+          <h2 class="font-bold self-center">Active Users</h2>
+          <div class="flex flex-col gap-1" id="users"></div>
+          <div class="flex">
+            <input
+              type="text"
+              id="username"
+              class="h-12 bg-slate-700 text-white grow px-4"
+              placeholder="Username..."
+            />
+            <button
+              id="login"
+              class="h-12 bg-green-500 hover:bg-green-600 text-white px-4"
+              onclick="changeUsername()"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="grow flex flex-col gap-4 pb-8" id="messages"></div>
+      </div>
+    </main>
+    <div class="flex justify-center">
+      <div class="flex grow max-w-3xl">
+        <input
+          type="text"
+          id="message"
+          class="h-12 bg-slate-700 text-white grow px-4"
+          placeholder="Message..."
+          onkeydown="if (event.key === 'Enter') sendMessage()"
+        />
+        <button
+          id="send"
+          class="h-12 bg-green-500 hover:bg-green-600 text-white px-4"
+          onclick="sendMessage()"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+    <footer class="flex justify-center h-20 items-center">
+      <p>Made with ❤️ and a lot of ☕️ by SwitzerChees</p>
+    </footer>
+  </body>
 </html>

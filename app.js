@@ -3,7 +3,6 @@ const http = require("http");
 var livereload = require("livereload");
 var connectLiveReload = require("connect-livereload");
 const { initializeWebsocketServer } = require("./server/websocketserver");
-const { initializeAPI } = require("./server/api");
 
 // Create the express server
 const app = express();
@@ -33,8 +32,6 @@ app.get("/", (req, res) => {
 (async function () {
   // Initialize the websocket server
   await initializeWebsocketServer(server);
-  // Initialize the REST api
-  initializeAPI(app);
   //start the web server
   const serverPort = process.env.PORT || 3000;
   server.listen(serverPort, () => {
