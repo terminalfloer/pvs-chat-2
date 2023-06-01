@@ -9,37 +9,38 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/script.js"></script>
   </head>
-  <body class="flex flex-col bg-slate-800 text-white h-screen w-screen gap-4">
-    <header class="flex justify-center items-center h-16">
-      <h1 class="font-bold text-2xl">PVS Chat</h1>
+  <body class="flex flex-col bg-slate-800 text-white h-screen w-screen gap-3">
+    <div class="absolute left-0 top-0 bottom-0 pl-8 flex items-center">
+      <div class="flex flex-col bg-slate-500 w-80 rounded-lg p-4 gap-4">
+        <h2 class="font-bold self-center">Active Users</h2>
+        <div class="flex flex-col gap-1" id="users"></div>
+        <div class="flex">
+          <input
+            type="text"
+            id="username"
+            class="h-12 bg-slate-700 text-white grow px-4"
+            placeholder="Username..."
+          />
+          <button
+            id="login"
+            class="h-12 bg-green-500 hover:bg-green-600 text-white px-4"
+            onclick="changeUsername()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+    <header class="flex justify-center items-center h-14 flex-shrink-0 pt-3">
+      <h1 class="font-bold text-2xl">💬 WhatsChat</h1>
     </header>
     <main class="grow flex justify-center overflow-y-auto">
-      <div class="flex max-w-xl md:max-w-3xl flex-col grow relative px-4">
-        <div
-          class="flex flex-col absolute -left-80 bg-slate-500 w-80 rounded-lg p-4 gap-4 top-0"
-        >
-          <h2 class="font-bold self-center">Active Users</h2>
-          <div class="flex flex-col gap-1" id="users"></div>
-          <div class="flex">
-            <input
-              type="text"
-              id="username"
-              class="h-12 bg-slate-700 text-white grow px-4"
-              placeholder="Username..."
-            />
-            <button
-              id="login"
-              class="h-12 bg-green-500 hover:bg-green-600 text-white px-4"
-              onclick="changeUsername()"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-        <div class="grow flex flex-col gap-4 pb-8" id="messages"></div>
-      </div>
+      <div
+        class="flex flex-col flex-grow flex-shrink overflow-y-auto max-w-xl md:max-w-3xl px-4 pt-4 bg-slate-600 rounded-lg gap-4 pb-8"
+        id="messages"
+      ></div>
     </main>
-    <div class="flex justify-center">
+    <div class="flex justify-center h-12 flex-shrink-0">
       <div class="flex grow max-w-3xl">
         <input
           type="text"
@@ -57,7 +58,7 @@
         </button>
       </div>
     </div>
-    <footer class="flex justify-center h-20 items-center">
+    <footer class="flex justify-center h-14 items-center flex-shrink-0">
       <p>Made with ❤️ and a lot of ☕️ by SwitzerChees</p>
     </footer>
   </body>

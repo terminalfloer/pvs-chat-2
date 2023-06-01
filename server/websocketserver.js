@@ -53,7 +53,7 @@ const onClientMessage = async (ws, message) => {
     case "user":
       clients = clients.filter((client) => client.ws !== ws);
       clients.push({ ws, user: messageObject.user });
-      console.log(clients.length)
+      console.log("Number of clients: " + clients.length)
       let users = await getUsersFromRedis();
       users = users.filter((user) => user.id !== messageObject.user.id);
       users.push(messageObject.user);
@@ -77,7 +77,6 @@ const onRedisMessage = async (message) => {
   console.log("Received message from redis channel: " + messageObject.type);
   switch (messageObject.type) {
     case "message":
-      console.log(clients.length)
       clients.forEach((client) => {
         client.ws.send(JSON.stringify(messageObject));
       });

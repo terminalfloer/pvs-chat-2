@@ -73,7 +73,7 @@ function showUsers(users) {
   usersElement.innerHTML = "";
   users.forEach((user) => {
     const userElement = document.createElement("div");
-    userElement.innerHTML = user.name;
+    userElement.innerHTML = "🟢 " + user.name;
     usersElement.appendChild(userElement);
   });
 }
@@ -81,7 +81,9 @@ function showUsers(users) {
 function showMessage(message) {
   const messageElement = document.createElement("div");
   const innerMessageElement = document.createElement("div");
-  const userElement = document.createElement("span");
+  const headerElement = document.createElement("span");
+  const usernameElement = document.createElement("span");
+  const timeElement = document.createElement("span");
   const messageTextElement = document.createElement("p");
   innerMessageElement.classList.add(
     "rounded-lg",
@@ -90,19 +92,24 @@ function showMessage(message) {
     "flex-col",
     "gap-2"
   );
-  userElement.classList.add("font-bold");
+  headerElement.classList.add("font-bold", "flex", "gap-2", "items-center");
   if (message.user.id === userId) {
     messageElement.classList.add("text-right", "self-end");
-    innerMessageElement.classList.add("bg-green-500");
+    innerMessageElement.classList.add("bg-green-500", "border-2", "border-green-400");
   } else {
-    innerMessageElement.classList.add("bg-slate-500");
+    innerMessageElement.classList.add("bg-slate-500", "border-2", "border-gray-400");
   }
-  userElement.innerHTML = message.user.name + " at " + message.time;
+  usernameElement.innerHTML = message.user.name;
+  timeElement.innerHTML = "at " + message.time;
+  timeElement.classList.add("text-xs");
+  headerElement.appendChild(usernameElement);
+  headerElement.appendChild(timeElement);
   messageTextElement.innerHTML = message.message;
-  innerMessageElement.appendChild(userElement);
+  innerMessageElement.appendChild(headerElement);
   innerMessageElement.appendChild(messageTextElement);
   messageElement.appendChild(innerMessageElement);
   document.getElementById("messages").appendChild(messageElement);
+  messageElement.scrollIntoView();
 }
 
 socket.addEventListener("close", (event) => {
