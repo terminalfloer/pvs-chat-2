@@ -3,6 +3,8 @@ const redis = require("redis");
 let publisher;
 let redisClient;
 
+const redisExpireTimeInSeconds = 10;
+
 let clients = [];
 
 // Intiiate the websocket server
@@ -25,7 +27,8 @@ const initializeWebsocketServer = async (server) => {
   websocketServer.on("connection", onConnection);
   websocketServer.on("error", console.error);
   await subscriber.subscribe("newMessage", onRedisMessage);
-  redisClient.del("users");
+  // Start the heartbeat once the server has been initialized
+  heartbeat();
 };
 
 // If a new connection is established, the onConnection function is called
@@ -35,13 +38,18 @@ const onConnection = (ws) => {
   ws.on("message", (message) => onClientMessage(ws, message));
 };
 
+// Get all users from redis
 const getUsersFromRedis = async () => {
-  let users = await redisClient.get("users");
-  if (users) {
-    users = JSON.parse(users);
-  } else {
-    users = [];
+  let userKeys = await redisClient.keys("user:*");
+
+  let users = [];
+  for (let i = 0; i < userKeys.length; i++) {
+    let user = await redisClient.get(userKeys[i]);
+    if (user) {
+      users.push(JSON.parse(user));
+    }
   }
+
   return users;
 };
 
@@ -53,11 +61,15 @@ const onClientMessage = async (ws, message) => {
     case "user":
       clients = clients.filter((client) => client.ws !== ws);
       clients.push({ ws, user: messageObject.user });
-      console.log("Number of clients: " + clients.length)
-      let users = await getUsersFromRedis();
-      users = users.filter((user) => user.id !== messageObject.user.id);
-      users.push(messageObject.user);
-      redisClient.set("users", JSON.stringify(users));
+      console.log("Number of clients: " + clients.length);
+      redisClient.set(
+        `user:${messageObject.user.id}`,
+        JSON.stringify(messageObject.user)
+      );
+      redisClient.expire(
+        `user:${messageObject.user.id}`,
+        redisExpireTimeInSeconds
+      );
       const message = {
         type: "pushUsers",
       };
@@ -82,14 +94,7 @@ const onRedisMessage = async (message) => {
       });
       break;
     case "pushUsers":
-      const users = await getUsersFromRedis();
-      const message = {
-        type: "users",
-        users,
-      };
-      clients.forEach((client) => {
-        client.ws.send(JSON.stringify(message));
-      });
+      await pushUsers();
       break;
     default:
       console.error("Unknown message type: " + messageObject.type);
@@ -100,16 +105,34 @@ const onRedisMessage = async (message) => {
 const onClose = async (ws) => {
   console.log("Websocket connection closed");
   const client = clients.find((client) => client.ws === ws);
-  let users = await getUsersFromRedis();
-  if (client) {
-    users = users.filter((user) => user.id !== client.user.id);
-  }
-  redisClient.set("users", JSON.stringify(users));
+  if (!client) return;
+  redisClient.del(`user:${client.user.id}`);
   const message = {
     type: "pushUsers",
   };
   publisher.publish("newMessage", JSON.stringify(message));
   clients = clients.filter((client) => client.ws !== ws);
+};
+
+// The heartbeat function is called every 5 seconds
+const heartbeat = async () => {
+  for (let i = 0; i < clients.length; i++) {
+    redisClient.expire(`user:${clients[i].user.id}`, redisExpireTimeInSeconds);
+  }
+  await pushUsers();
+  setTimeout(heartbeat, (redisExpireTimeInSeconds * 1000) / 2);
+};
+
+// Push the users to all connected clients
+const pushUsers = async () => {
+  const users = await getUsersFromRedis();
+  const message = {
+    type: "users",
+    users,
+  };
+  clients.forEach((client) => {
+    client.ws.send(JSON.stringify(message));
+  });
 };
 
 module.exports = { initializeWebsocketServer };
