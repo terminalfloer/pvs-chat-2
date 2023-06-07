@@ -28,7 +28,7 @@ function guidGenerator() {
   );
 }
 
-const backendUrl = window.location.origin.replace(/^http/, "ws");
+const backendUrl = window.location.origin.replace(/^http/, "ws").replace(/^https/, "wss")  
 const socket = new WebSocket(backendUrl);
 
 const userId = guidGenerator();
