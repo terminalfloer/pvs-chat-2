@@ -6,3 +6,12 @@ services:
     restart: always
     ports:
       - 6379:6379
+
+  chat_app:
+    image: senfl/transferarbeit-pvs-chat
+    ports:
+      - 9000:3000
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
