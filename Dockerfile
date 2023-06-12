@@ -8,7 +8,6 @@ WORKDIR /app
 COPY package.json ./ 
 # package-lock.json
 
-
 # Install the dependencies
 RUN npm install
 
